@@ -10,7 +10,7 @@ local function FetchAsync(Url)
 	elseif request then
 		return request({Url = Url, Method = "GET"}).Body
 	end
-	error("UILibrary: no HTTP function available on this executor")
+	error("UI: no HTTP function available on this executor")
 end
 
 local function LoadModule(Path)
