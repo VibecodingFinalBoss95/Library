@@ -1,4 +1,4 @@
-local Repository = "https://raw.githubusercontent.com/VibecodingFinalBoss95/Library/main/UILibrary/"
+local Repository = "https://raw.githubusercontent.com/VibecodingFinalBoss95/Library/main/Deceptibots/"
 
 local function FetchAsync(Url)
 	if game.HttpGet then
@@ -10,7 +10,7 @@ local function FetchAsync(Url)
 	elseif request then
 		return request({Url = Url, Method = "GET"}).Body
 	end
-	error("UI: no HTTP function available on this executor")
+	error("Deceptibots: no HTTP function available on this executor")
 end
 
 local function LoadModule(Path)
@@ -32,10 +32,10 @@ local Section = LoadModule("Section.lua")(Theme, Utility, Toggle, Button, Dropdo
 local Tab = LoadModule("Tab.lua")(Theme, Utility, Section)
 local Window = LoadModule("Window.lua")(Theme, Utility, Tab)
 
-local UILibrary = {}
+local Deceptibots = {}
 
-function UILibrary.CreateWindow(Self, Config)
+function Deceptibots.CreateWindow(Self, Config)
 	return Window.new(Config)
 end
 
-return UILibrary
+return Deceptibots
