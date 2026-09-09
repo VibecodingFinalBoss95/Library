@@ -7,9 +7,11 @@ return function(Theme, Utility)
 		local Self = setmetatable({}, Dropdown)
 
 		Self.Options = Config.Options or {}
-		Self.Value = Config.Default or Self.Options[1]
+		Self.Multi = Config.Multi or false
+		Self.Value = Self.Multi and (Config.Default or {}) or (Config.Default or Self.Options[1])
 		Self.Callback = Config.Callback or function() end
 		Self.Open = false
+		Self.OptionButtons = {}
 
 		Utility.Build({
 			function()
@@ -55,10 +57,10 @@ return function(Theme, Utility)
 				end)
 
 				Self.SelectedLabel = Utility.Create("TextLabel", {
-					Text = Self.Value and tostring(Self.Value) or "Select...",
+					Text = (not Self.Multi and Self.Value) and tostring(Self.Value) or "Select...",
 					Font = Theme.Font,
 					TextSize = 13,
-					TextColor3 = Self.Value and Theme.Text or Theme.TextMuted,
+					TextColor3 = (not Self.Multi and Self.Value) and Theme.Text or Theme.TextMuted,
 					TextXAlignment = Enum.TextXAlignment.Left,
 					BackgroundTransparency = 1,
 					Size = UDim2.new(1, -34, 1, 0),
@@ -114,8 +116,34 @@ return function(Theme, Utility)
 		DestroyOld(Children, Index + 1)
 	end
 
+	local function Contains(List, Value, Index)
+		Index = Index or 1
+		local Item = List[Index]
+		if Item == nil then
+			return false
+		end
+		if Item == Value then
+			return true
+		end
+		return Contains(List, Value, Index + 1)
+	end
+
+	local function RemoveValue(List, Value, Index, Result)
+		Index = Index or 1
+		Result = Result or {}
+		local Item = List[Index]
+		if Item == nil then
+			return Result
+		end
+		if Item ~= Value then
+			table.insert(Result, Item)
+		end
+		return RemoveValue(List, Value, Index + 1, Result)
+	end
+
 	function Dropdown.Refresh(Self)
 		DestroyOld(Self.List:GetChildren(), 1)
+		Self.OptionButtons = {}
 
 		local function BuildOption(Index)
 			local Option = Self.Options[Index]
@@ -143,20 +171,69 @@ return function(Theme, Utility)
 				Parent = OptionButton,
 			})
 
+			Self.OptionButtons[Index] = OptionButton
+
 			OptionButton.MouseEnter:Connect(function()
-				Utility.Tween(OptionButton, Theme.TweenFast, {BackgroundColor3 = Theme.ElevatedHover})
+				if not (Self.Multi and Contains(Self.Value, Option)) then
+					Utility.Tween(OptionButton, Theme.TweenFast, {BackgroundColor3 = Theme.ElevatedHover})
+				end
 			end)
 			OptionButton.MouseLeave:Connect(function()
-				Utility.Tween(OptionButton, Theme.TweenFast, {BackgroundColor3 = Theme.Elevated})
+				if not (Self.Multi and Contains(Self.Value, Option)) then
+					Utility.Tween(OptionButton, Theme.TweenFast, {BackgroundColor3 = Theme.Elevated})
+				end
 			end)
 			OptionButton.MouseButton1Click:Connect(function()
 				Self:Set(Option)
-				Self:Toggle()
+				if not Self.Multi then
+					Self:Toggle()
+				end
 			end)
 
 			BuildOption(Index + 1)
 		end
 		BuildOption(1)
+
+		Self:Paint()
+	end
+
+	function Dropdown.Paint(Self)
+		local function PaintOption(Index)
+			local OptionButton = Self.OptionButtons[Index]
+			if OptionButton == nil then
+				return
+			end
+			local IsSelected = Self.Multi and Contains(Self.Value, Self.Options[Index])
+			Utility.Tween(OptionButton, Theme.TweenFast, {
+				BackgroundColor3 = IsSelected and Theme.AccentMuted or Theme.Elevated,
+			})
+			PaintOption(Index + 1)
+		end
+		PaintOption(1)
+
+		if not Self.Multi then
+			return
+		end
+
+		local function CountSelected(Index, Count)
+			Count = Count or 0
+			if Self.Value[Index] == nil then
+				return Count
+			end
+			return CountSelected(Index + 1, Count + 1)
+		end
+		local Count = CountSelected(1)
+
+		if Count == 0 then
+			Self.SelectedLabel.Text = "Select..."
+			Self.SelectedLabel.TextColor3 = Theme.TextMuted
+		elseif Count == 1 then
+			Self.SelectedLabel.Text = tostring(Self.Value[1])
+			Self.SelectedLabel.TextColor3 = Theme.Text
+		else
+			Self.SelectedLabel.Text = Count .. " Selected"
+			Self.SelectedLabel.TextColor3 = Theme.Text
+		end
 	end
 
 	function Dropdown.Toggle(Self)
@@ -166,11 +243,21 @@ return function(Theme, Utility)
 		Utility.Tween(Self.Chevron, Theme.TweenFast, {Rotation = Self.Open and 180 or 0})
 	end
 
-	function Dropdown.Set(Self, Value)
-		Self.Value = Value
-		Self.SelectedLabel.Text = tostring(Value)
-		Self.SelectedLabel.TextColor3 = Theme.Text
-		Self.Callback(Value)
+	function Dropdown.Set(Self, Option)
+		if Self.Multi then
+			if Contains(Self.Value, Option) then
+				Self.Value = RemoveValue(Self.Value, Option)
+			else
+				table.insert(Self.Value, Option)
+			end
+			Self:Paint()
+			Self.Callback(Self.Value)
+		else
+			Self.Value = Option
+			Self.SelectedLabel.Text = tostring(Option)
+			Utility.Tween(Self.SelectedLabel, Theme.TweenFast, {TextColor3 = Theme.Text})
+			Self.Callback(Option)
+		end
 	end
 
 	return Dropdown
