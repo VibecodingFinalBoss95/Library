@@ -70,6 +70,30 @@ return function(Theme)
 		return Tween
 	end
 
+	function Utility.AddPressScale(Target, PressedScale, RestScale)
+		RestScale = RestScale or 1
+		local Scale = Utility.Create("UIScale", {
+			Scale = RestScale,
+			Parent = Target,
+		})
+
+		Target.InputBegan:Connect(function(Input)
+			if Input.UserInputType == Enum.UserInputType.MouseButton1
+				or Input.UserInputType == Enum.UserInputType.Touch then
+				Utility.Tween(Scale, Theme.TweenFast, {Scale = PressedScale})
+			end
+		end)
+
+		Target.InputEnded:Connect(function(Input)
+			if Input.UserInputType == Enum.UserInputType.MouseButton1
+				or Input.UserInputType == Enum.UserInputType.Touch then
+				Utility.Tween(Scale, Theme.TweenFast, {Scale = RestScale})
+			end
+		end)
+
+		return Scale
+	end
+
 	function Utility.MakeDraggable(Frame, Handle)
 		Handle = Handle or Frame
 		local Dragging = false
