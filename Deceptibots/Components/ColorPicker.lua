@@ -49,6 +49,7 @@ return function(Theme, Utility)
 				})
 				Utility.AddCorner(Self.Head, Theme.CornerRadiusSmall)
 				Utility.AddStroke(Self.Head, Theme.Border, 1)
+				Utility.AddPressScale(Self.Head, 0.985)
 				Self.Head.MouseEnter:Connect(function()
 					Utility.Tween(Self.Head, Theme.TweenFast, {BackgroundColor3 = Theme.ElevatedHover})
 				end)
@@ -78,9 +79,10 @@ return function(Theme, Utility)
 				Utility.AddStroke(Self.Swatch, Theme.Border, 1)
 			end,
 			function()
-				Self.Panel = Utility.Create("Frame", {
+				Self.Panel = Utility.Create("CanvasGroup", {
 					BackgroundColor3 = Theme.Elevated,
 					Size = UDim2.new(1, 0, 0, 0),
+					GroupTransparency = 1,
 					ClipsDescendants = true,
 					LayoutOrder = 2,
 					Parent = Self.Frame,
@@ -141,7 +143,8 @@ return function(Theme, Utility)
 					Parent = Self.SVBox,
 				})
 				Utility.AddCorner(Self.SVCursor, UDim.new(1, 0))
-				Utility.AddStroke(Self.SVCursor, Theme.Background, 2)
+				Self.SVCursorStroke = Utility.AddStroke(Self.SVCursor, Theme.Background, 2)
+				Self.SVCursorScale = Utility.Create("UIScale", {Scale = 1, Parent = Self.SVCursor})
 			end,
 			function()
 				Self.HueBar = Utility.Create("Frame", {
@@ -164,7 +167,8 @@ return function(Theme, Utility)
 					Parent = Self.HueBar,
 				})
 				Utility.AddCorner(Self.HueCursor, Theme.CornerRadiusSmall)
-				Utility.AddStroke(Self.HueCursor, Theme.Background, 2)
+				Self.HueCursorStroke = Utility.AddStroke(Self.HueCursor, Theme.Background, 2)
+				Self.HueCursorScale = Utility.Create("UIScale", {Scale = 1, Parent = Self.HueCursor})
 			end,
 			function()
 				local DraggingSV, DraggingHue = false, false
@@ -192,6 +196,8 @@ return function(Theme, Utility)
 					if Input.UserInputType == Enum.UserInputType.MouseButton1
 						or Input.UserInputType == Enum.UserInputType.Touch then
 						DraggingSV = true
+						Utility.Tween(Self.SVCursorStroke, Theme.TweenFast, {Thickness = 3})
+						Utility.Tween(Self.SVCursorScale, Theme.TweenFast, {Scale = 1.12})
 						UpdateSV(Input.Position)
 					end
 				end)
@@ -200,6 +206,8 @@ return function(Theme, Utility)
 					if Input.UserInputType == Enum.UserInputType.MouseButton1
 						or Input.UserInputType == Enum.UserInputType.Touch then
 						DraggingHue = true
+						Utility.Tween(Self.HueCursorStroke, Theme.TweenFast, {Thickness = 3})
+						Utility.Tween(Self.HueCursorScale, Theme.TweenFast, {Scale = 1.12})
 						UpdateHue(Input.Position)
 					end
 				end)
@@ -218,6 +226,14 @@ return function(Theme, Utility)
 				UserInputService.InputEnded:Connect(function(Input)
 					if Input.UserInputType == Enum.UserInputType.MouseButton1
 						or Input.UserInputType == Enum.UserInputType.Touch then
+						if DraggingSV then
+							Utility.Tween(Self.SVCursorStroke, Theme.TweenFast, {Thickness = 2})
+							Utility.Tween(Self.SVCursorScale, Theme.TweenFast, {Scale = 1})
+						end
+						if DraggingHue then
+							Utility.Tween(Self.HueCursorStroke, Theme.TweenFast, {Thickness = 2})
+							Utility.Tween(Self.HueCursorScale, Theme.TweenFast, {Scale = 1})
+						end
 						DraggingSV = false
 						DraggingHue = false
 					end
@@ -242,6 +258,7 @@ return function(Theme, Utility)
 		Self.Open = not Self.Open
 		Utility.Tween(Self.Panel, Theme.TweenMedium, {
 			Size = UDim2.new(1, 0, 0, Self.Open and 174 or 0),
+			GroupTransparency = Self.Open and 0 or 1,
 		})
 	end
 
