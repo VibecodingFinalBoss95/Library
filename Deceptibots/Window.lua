@@ -30,13 +30,14 @@ return function(Theme, Utility, TabModule)
 				})
 			end,
 			function()
-				Self.Root = Utility.Create("Frame", {
+				Self.Root = Utility.Create("CanvasGroup", {
 					Name = "Root",
 					Size = Self.Size,
 					AnchorPoint = Vector2.new(0.5, 0.5),
 					Position = UDim2.new(0.5, 0, 0.5, 0),
 					BackgroundColor3 = Theme.Background,
 					BorderSizePixel = 0,
+					GroupTransparency = 1,
 					Parent = Self.ScreenGui,
 				})
 				Utility.AddCorner(Self.Root, Theme.CornerRadiusLarge)
@@ -99,6 +100,7 @@ return function(Theme, Utility, TabModule)
 					Position = UDim2.new(1, -36, 0.5, -16),
 					Parent = Self.TitleBar,
 				})
+				Utility.AddPressScale(CloseButton, 0.94)
 				CloseButton.MouseButton1Click:Connect(function()
 					Self.ScreenGui.Enabled = false
 				end)
@@ -142,8 +144,9 @@ return function(Theme, Utility, TabModule)
 			end,
 			function()
 				local TargetScale = ComputeScale(Self.ScreenGui.AbsoluteSize)
-				Self.Scale.Scale = TargetScale * 0.92
+				Self.Scale.Scale = TargetScale * 0.96
 				Utility.Tween(Self.Scale, Theme.TweenMedium, {Scale = TargetScale})
+				Utility.Tween(Self.Root, Theme.TweenMedium, {GroupTransparency = 0})
 
 				Self.ScreenGui:GetPropertyChangedSignal("AbsoluteSize"):Connect(function()
 					Utility.Tween(Self.Scale, Theme.TweenMedium, {Scale = ComputeScale(Self.ScreenGui.AbsoluteSize)})
