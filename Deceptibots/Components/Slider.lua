@@ -68,23 +68,34 @@ return function(Theme, Utility)
 					Parent = Self.Track,
 				})
 				Utility.AddCorner(Self.Handle, UDim.new(1, 0))
-				Utility.AddStroke(Self.Handle, Theme.Background, 2)
+				Self.HandleStroke = Utility.AddStroke(Self.Handle, Theme.Background, 2)
+				Self.HandleScale = Utility.Create("UIScale", {Scale = 1, Parent = Self.Handle})
 			end,
 			function()
 				local Dragging = false
+
+				local function Render()
+					local Ratio = (Self.Value - Self.Min) / (Self.Max - Self.Min)
+					Self.Fill.Size = UDim2.new(Ratio, 0, 1, 0)
+					Self.Handle.Position = UDim2.new(Ratio, -7, 0.5, -7)
+					Self.ValueLabel.Text = tostring(Utility.Round(Self.Value, Self.Decimals))
+				end
 
 				local function UpdateFromInput(PosX)
 					local TrackPos = Self.Track.AbsolutePosition.X
 					local TrackSize = Self.Track.AbsoluteSize.X
 					local Relative = math.clamp((PosX - TrackPos) / TrackSize, 0, 1)
-					local NewValue = Self.Min + (Self.Max - Self.Min) * Relative
-					Self:Set(Utility.Round(NewValue, Self.Decimals))
+					Self.Value = Utility.Round(Self.Min + (Self.Max - Self.Min) * Relative, Self.Decimals)
+					Render()
+					Self.Callback(Self.Value)
 				end
 
 				Self.Track.InputBegan:Connect(function(Input)
 					if Input.UserInputType == Enum.UserInputType.MouseButton1
 						or Input.UserInputType == Enum.UserInputType.Touch then
 						Dragging = true
+						Utility.Tween(Self.HandleStroke, Theme.TweenFast, {Thickness = 3})
+						Utility.Tween(Self.HandleScale, Theme.TweenFast, {Scale = 1.12})
 						UpdateFromInput(Input.Position.X)
 					end
 				end)
@@ -99,6 +110,10 @@ return function(Theme, Utility)
 				UserInputService.InputEnded:Connect(function(Input)
 					if Input.UserInputType == Enum.UserInputType.MouseButton1
 						or Input.UserInputType == Enum.UserInputType.Touch then
+						if Dragging then
+							Utility.Tween(Self.HandleStroke, Theme.TweenFast, {Thickness = 2})
+							Utility.Tween(Self.HandleScale, Theme.TweenFast, {Scale = 1})
+						end
 						Dragging = false
 					end
 				end)
@@ -113,8 +128,8 @@ return function(Theme, Utility)
 		Self.Value = Value
 
 		local Ratio = (Value - Self.Min) / (Self.Max - Self.Min)
-		Self.Fill.Size = UDim2.new(Ratio, 0, 1, 0)
-		Self.Handle.Position = UDim2.new(Ratio, -7, 0.5, -7)
+		Utility.Tween(Self.Fill, Theme.TweenFast, {Size = UDim2.new(Ratio, 0, 1, 0)})
+		Utility.Tween(Self.Handle, Theme.TweenFast, {Position = UDim2.new(Ratio, -7, 0.5, -7)})
 		Self.ValueLabel.Text = tostring(Utility.Round(Value, Self.Decimals))
 
 		Self.Callback(Value)
