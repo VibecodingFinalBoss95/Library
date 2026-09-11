@@ -21,6 +21,7 @@ return function(Theme, Utility, SectionModule)
 					Parent = Window.TabBar,
 				})
 				Utility.AddCorner(Self.Button, Theme.CornerRadiusSmall)
+				Utility.AddPressScale(Self.Button, 0.985)
 
 				Self.Indicator = Utility.Create("Frame", {
 					Name = "Indicator",
@@ -102,7 +103,7 @@ return function(Theme, Utility, SectionModule)
 		OtherTab.Page.Visible = false
 		Utility.Tween(OtherTab.Button, Theme.TweenFast, {BackgroundTransparency = 1})
 		Utility.Tween(OtherTab.Indicator, Theme.TweenFast, {Size = UDim2.new(0, 3, 0, 0)})
-		OtherTab.Button.Label.TextColor3 = Theme.TextMuted
+		Utility.Tween(OtherTab.Button.Label, Theme.TweenFast, {TextColor3 = Theme.TextMuted})
 		DeselectAll(Tabs, Index + 1)
 	end
 
@@ -113,7 +114,7 @@ return function(Theme, Utility, SectionModule)
 		Self.Page.Visible = true
 		Utility.Tween(Self.Button, Theme.TweenFast, {BackgroundTransparency = 0.85})
 		Utility.Tween(Self.Indicator, Theme.TweenFast, {Size = UDim2.new(0, 3, 0, 18)})
-		Self.Button.Label.TextColor3 = Theme.Text
+		Utility.Tween(Self.Button.Label, Theme.TweenFast, {TextColor3 = Theme.Text})
 	end
 
 	function Tab.CreateSection(Self, Title)
