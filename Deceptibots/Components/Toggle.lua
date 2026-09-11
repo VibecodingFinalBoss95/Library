@@ -37,7 +37,8 @@ return function(Theme, Utility)
 					Parent = Self.Frame,
 				})
 				Utility.AddCorner(Self.Track, UDim.new(1, 0))
-				Utility.AddStroke(Self.Track, Theme.Border, 1)
+				Self.TrackStroke = Utility.AddStroke(Self.Track, Theme.Border, 1)
+				Utility.AddPressScale(Self.Track, 0.96)
 
 				Self.Knob = Utility.Create("Frame", {
 					BackgroundColor3 = Theme.Text,
@@ -47,6 +48,12 @@ return function(Theme, Utility)
 				})
 				Utility.AddCorner(Self.Knob, UDim.new(1, 0))
 
+				Self.Track.MouseEnter:Connect(function()
+					Utility.Tween(Self.TrackStroke, Theme.TweenFast, {Color = Theme.BorderLight})
+				end)
+				Self.Track.MouseLeave:Connect(function()
+					Utility.Tween(Self.TrackStroke, Theme.TweenFast, {Color = Theme.Border})
+				end)
 				Self.Track.MouseButton1Click:Connect(function()
 					Self:Set(not Self.Value)
 				end)
