@@ -31,8 +31,8 @@ return function()
 	Theme.FontMedium = Enum.Font.GothamMedium
 	Theme.FontBold   = Enum.Font.GothamBold
 
-	Theme.TweenFast   = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-	Theme.TweenMedium = TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+	Theme.TweenFast   = TweenInfo.new(0.18, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+	Theme.TweenMedium = TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
 
 	Theme.ReferenceWidth  = 1280
 	Theme.ReferenceHeight = 800
