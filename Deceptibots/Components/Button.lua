@@ -21,6 +21,7 @@ return function(Theme, Utility)
 				})
 				Utility.AddCorner(Self.Instance, Theme.CornerRadiusSmall)
 				Utility.AddStroke(Self.Instance, Theme.Border, 1)
+				Utility.AddPressScale(Self.Instance, 0.98)
 			end,
 			function()
 				Self.Instance.MouseEnter:Connect(function()
