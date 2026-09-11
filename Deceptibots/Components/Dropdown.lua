@@ -49,6 +49,7 @@ return function(Theme, Utility)
 				})
 				Utility.AddCorner(Self.Head, Theme.CornerRadiusSmall)
 				Utility.AddStroke(Self.Head, Theme.Border, 1)
+				Utility.AddPressScale(Self.Head, 0.985)
 				Self.Head.MouseEnter:Connect(function()
 					Utility.Tween(Self.Head, Theme.TweenFast, {BackgroundColor3 = Theme.ElevatedHover})
 				end)
@@ -80,10 +81,11 @@ return function(Theme, Utility)
 				})
 			end,
 			function()
-				Self.List = Utility.Create("Frame", {
+				Self.List = Utility.Create("CanvasGroup", {
 					Name = "List",
 					BackgroundColor3 = Theme.Elevated,
 					Size = UDim2.new(1, 0, 0, 0),
+					GroupTransparency = 1,
 					ClipsDescendants = true,
 					LayoutOrder = 3,
 					Parent = Self.Frame,
@@ -239,7 +241,10 @@ return function(Theme, Utility)
 	function Dropdown.Toggle(Self)
 		Self.Open = not Self.Open
 		local TargetHeight = Self.Open and (#Self.Options * 30) or 0
-		Utility.Tween(Self.List, Theme.TweenMedium, {Size = UDim2.new(1, 0, 0, TargetHeight)})
+		Utility.Tween(Self.List, Theme.TweenMedium, {
+			Size = UDim2.new(1, 0, 0, TargetHeight),
+			GroupTransparency = Self.Open and 0 or 1,
+		})
 		Utility.Tween(Self.Chevron, Theme.TweenFast, {Rotation = Self.Open and 180 or 0})
 	end
 
