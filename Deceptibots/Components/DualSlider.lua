@@ -68,23 +68,39 @@ return function(Theme, Utility)
 				})
 				Utility.AddCorner(Self.Fill, UDim.new(1, 0))
 
-				Self.LowHandle = Utility.Create("Frame", {
-					BackgroundColor3 = Theme.Gold,
-					Size = UDim2.fromOffset(14, 14),
-					Position = UDim2.new(LowRatio, -7, 0.5, -7),
+				Self.LowHitArea = Utility.Create("Frame", {
+					BackgroundTransparency = 1,
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Size = UDim2.fromOffset(32, 32),
+					Position = UDim2.new(LowRatio, 0, 0.5, 0),
 					ZIndex = 2,
 					Parent = Self.Track,
+				})
+				Self.LowHandle = Utility.Create("Frame", {
+					BackgroundColor3 = Theme.Gold,
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Size = UDim2.fromOffset(14, 14),
+					Position = UDim2.new(0.5, 0, 0.5, 0),
+					Parent = Self.LowHitArea,
 				})
 				Utility.AddCorner(Self.LowHandle, UDim.new(1, 0))
 				Self.LowHandleStroke = Utility.AddStroke(Self.LowHandle, Theme.Background, 2)
 				Self.LowHandleScale = Utility.Create("UIScale", {Scale = 1, Parent = Self.LowHandle})
 
-				Self.HighHandle = Utility.Create("Frame", {
-					BackgroundColor3 = Theme.Gold,
-					Size = UDim2.fromOffset(14, 14),
-					Position = UDim2.new(HighRatio, -7, 0.5, -7),
+				Self.HighHitArea = Utility.Create("Frame", {
+					BackgroundTransparency = 1,
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Size = UDim2.fromOffset(32, 32),
+					Position = UDim2.new(HighRatio, 0, 0.5, 0),
 					ZIndex = 2,
 					Parent = Self.Track,
+				})
+				Self.HighHandle = Utility.Create("Frame", {
+					BackgroundColor3 = Theme.Gold,
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Size = UDim2.fromOffset(14, 14),
+					Position = UDim2.new(0.5, 0, 0.5, 0),
+					Parent = Self.HighHitArea,
 				})
 				Utility.AddCorner(Self.HighHandle, UDim.new(1, 0))
 				Self.HighHandleStroke = Utility.AddStroke(Self.HighHandle, Theme.Background, 2)
@@ -98,8 +114,8 @@ return function(Theme, Utility)
 					local HighRatio = Ratio(Self.High, Self.Min, Self.Max)
 					Self.Fill.Position = UDim2.new(LowRatio, 0, 0, 0)
 					Self.Fill.Size = UDim2.new(HighRatio - LowRatio, 0, 1, 0)
-					Self.LowHandle.Position = UDim2.new(LowRatio, -7, 0.5, -7)
-					Self.HighHandle.Position = UDim2.new(HighRatio, -7, 0.5, -7)
+					Self.LowHitArea.Position = UDim2.new(LowRatio, 0, 0.5, 0)
+					Self.HighHitArea.Position = UDim2.new(HighRatio, 0, 0.5, 0)
 					Self.ValueLabel.Text = tostring(Utility.Round(Self.Low, Self.Decimals)) .. " - " .. tostring(Utility.Round(Self.High, Self.Decimals))
 				end
 
@@ -119,7 +135,7 @@ return function(Theme, Utility)
 					Self.Callback(Self.Low, Self.High)
 				end
 
-				Self.LowHandle.InputBegan:Connect(function(Input)
+				Self.LowHitArea.InputBegan:Connect(function(Input)
 					if Input.UserInputType == Enum.UserInputType.MouseButton1
 						or Input.UserInputType == Enum.UserInputType.Touch then
 						DraggingLow = true
@@ -128,7 +144,7 @@ return function(Theme, Utility)
 					end
 				end)
 
-				Self.HighHandle.InputBegan:Connect(function(Input)
+				Self.HighHitArea.InputBegan:Connect(function(Input)
 					if Input.UserInputType == Enum.UserInputType.MouseButton1
 						or Input.UserInputType == Enum.UserInputType.Touch then
 						DraggingHigh = true
@@ -176,8 +192,8 @@ return function(Theme, Utility)
 			Position = UDim2.new(LowRatio, 0, 0, 0),
 			Size = UDim2.new(HighRatio - LowRatio, 0, 1, 0),
 		})
-		Utility.Tween(Self.LowHandle, Theme.TweenFast, {Position = UDim2.new(LowRatio, -7, 0.5, -7)})
-		Utility.Tween(Self.HighHandle, Theme.TweenFast, {Position = UDim2.new(HighRatio, -7, 0.5, -7)})
+		Utility.Tween(Self.LowHitArea, Theme.TweenFast, {Position = UDim2.new(LowRatio, 0, 0.5, 0)})
+		Utility.Tween(Self.HighHitArea, Theme.TweenFast, {Position = UDim2.new(HighRatio, 0, 0.5, 0)})
 		Self.ValueLabel.Text = tostring(Utility.Round(Self.Low, Self.Decimals)) .. " - " .. tostring(Utility.Round(Self.High, Self.Decimals))
 
 		Self.Callback(Self.Low, Self.High)
