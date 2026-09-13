@@ -1,4 +1,4 @@
-return function(Theme, Utility, Toggle, Button, Dropdown, Slider, AdaptiveInput, ColorPicker)
+return function(Theme, Utility, Toggle, Button, Dropdown, Slider, DualSlider, AdaptiveInput, ColorPicker, TextLabel, Paragraph)
 	local Section = {}
 	Section.__index = Section
 
@@ -73,12 +73,24 @@ return function(Theme, Utility, Toggle, Button, Dropdown, Slider, AdaptiveInput,
 		return Slider.new(Self, Config)
 	end
 
+	function Section.CreateDualSlider(Self, Config)
+		return DualSlider.new(Self, Config)
+	end
+
 	function Section.CreateAdaptiveInput(Self, Config)
 		return AdaptiveInput.new(Self, Config)
 	end
 
 	function Section.CreateColorPicker(Self, Config)
 		return ColorPicker.new(Self, Config)
+	end
+
+	function Section.CreateTextLabel(Self, Config)
+		return TextLabel.new(Self, Config)
+	end
+
+	function Section.CreateParagraph(Self, Config)
+		return Paragraph.new(Self, Config)
 	end
 
 	return Section
